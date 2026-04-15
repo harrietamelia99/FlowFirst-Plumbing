@@ -104,8 +104,8 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* Trust points */}
-            <div className="flex flex-wrap gap-x-6 gap-y-3 animate-fade-up delay-300">
+            {/* Trust points — hidden on mobile, shown on desktop */}
+            <div className="hidden lg:flex flex-wrap gap-x-6 gap-y-3 animate-fade-up delay-300">
               {trustPoints.map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2 text-sm text-gray-400">
                   <span
@@ -119,16 +119,31 @@ export default function Hero() {
               ))}
             </div>
 
-            {/* Mobile hero image */}
-            <div
-              className="lg:hidden mt-8 rounded-2xl overflow-hidden animate-fade-up delay-400"
-              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)" }}
-            >
-              <img
-                src="/hero-bathroom.jpg"
-                alt="Bathroom installation by FlowFirst Plumbing"
-                className="w-full h-56 object-cover block"
-              />
+            {/* Mobile hero image + trust points */}
+            <div className="lg:hidden mt-8 animate-fade-up delay-400">
+              <div
+                className="rounded-2xl overflow-hidden mb-5"
+                style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)" }}
+              >
+                <img
+                  src="/hero-bathroom.jpg"
+                  alt="Bathroom installation by FlowFirst Plumbing"
+                  className="w-full h-56 object-cover block"
+                />
+              </div>
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                {trustPoints.map(({ icon: Icon, label }) => (
+                  <div key={label} className="flex items-center gap-2 text-sm text-gray-400">
+                    <span
+                      className="flex items-center justify-center w-7 h-7 rounded-lg"
+                      style={{ background: "linear-gradient(135deg, rgba(158,231,240,0.12) 0%, rgba(65,158,188,0.18) 100%)" }}
+                    >
+                      <Icon size={14} className="text-[#9ee7f0]" />
+                    </span>
+                    <span className="font-500">{label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
