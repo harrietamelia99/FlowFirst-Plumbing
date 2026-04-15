@@ -138,36 +138,26 @@ export default function Testimonials() {
 
         {/* Mobile carousel */}
         <div className="md:hidden reveal">
-          <div className="relative">
-            {/* Card */}
-            <div
-              className="bg-[#2c2c2c] rounded-2xl p-7 flex flex-col"
-              style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)", minHeight: 320 }}
-            >
-              <TestimonialCard testimonial={testimonials[active]} />
-            </div>
+          {/* Card */}
+          <div
+            className="bg-[#2c2c2c] rounded-2xl p-7 flex flex-col"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)", minHeight: 320 }}
+          >
+            <TestimonialCard testimonial={testimonials[active]} />
+          </div>
 
-            {/* Arrow buttons */}
+          {/* Arrows + Dots */}
+          <div className="flex items-center justify-center gap-4 mt-6">
             <button
               onClick={prev}
               aria-label="Previous review"
-              className="absolute -left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
               style={{ background: "linear-gradient(135deg,#419ebc,#2d5f78)", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}
             >
               <ChevronLeft size={18} />
             </button>
-            <button
-              onClick={next}
-              aria-label="Next review"
-              className="absolute -right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
-              style={{ background: "linear-gradient(135deg,#419ebc,#2d5f78)", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
 
-          {/* Dots */}
-          <div className="flex justify-center gap-2 mt-6">
+            <div className="flex items-center gap-2">
             {testimonials.map((_, i) => (
               <button
                 key={i}
@@ -183,6 +173,16 @@ export default function Testimonials() {
                 }}
               />
             ))}
+            </div>
+
+            <button
+              onClick={next}
+              aria-label="Next review"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+              style={{ background: "linear-gradient(135deg,#419ebc,#2d5f78)", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
         </div>
 
