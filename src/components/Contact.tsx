@@ -92,7 +92,7 @@ export default function Contact() {
             Request a free quote
           </h2>
           <p className="text-gray-400 text-lg">
-            Fill in the form or message us directly on WhatsApp — whichever is easiest for you.
+            Fill in the form or message us directly on WhatsApp, whichever is easiest for you.
           </p>
         </div>
 
