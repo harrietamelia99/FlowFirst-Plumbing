@@ -9,7 +9,7 @@ function WhatsAppIcon() {
     </svg>
   );
 }
-import { useState, FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const G = {
@@ -53,10 +53,30 @@ export default function Contact() {
   const sectionRef = useScrollReveal();
   const [formState, setFormState] = useState({ name: "", phone: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("https://formspree.io/f/mqeweygj", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(formState),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+        setFormState({ name: "", phone: "", email: "", message: "" });
+      } else {
+        setError("Something went wrong. Please try again or call us directly.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again or call us directly.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -232,13 +252,18 @@ export default function Contact() {
                     />
                   </div>
 
+                  {error && (
+                    <p className="mb-4 text-sm text-red-400 text-center">{error}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2.5 py-3.5 text-white font-700 rounded-xl shadow-sm hover:shadow-lg hover:opacity-90 transition-all duration-200 text-sm group"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2.5 py-3.5 text-white font-700 rounded-xl shadow-sm hover:shadow-lg hover:opacity-90 transition-all duration-200 text-sm group disabled:opacity-60 disabled:cursor-not-allowed"
                     style={{ background: G.dark }}
                   >
-                    Request a Quote
-                    <Send size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    {loading ? "Sending…" : "Request a Quote"}
+                    {!loading && <Send size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />}
                   </button>
 
                   <p className="mt-4 text-center text-xs text-gray-500">
