@@ -1,6 +1,6 @@
 "use client";
 
-import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
+import { Phone, MapPin, Clock, Send } from "lucide-react";
 
 function WhatsAppIcon() {
   return (
@@ -25,13 +25,6 @@ const contactInfo = [
     value: "07946 113945",
     href: "tel:+447946113945",
     sub: "Mon–Sat 7am–7pm · 24/7 emergencies",
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: "hello@flowfirstplumbing.co.uk",
-    href: "mailto:hello@flowfirstplumbing.co.uk",
-    sub: "We respond within 2 hours",
   },
   {
     icon: MapPin,
