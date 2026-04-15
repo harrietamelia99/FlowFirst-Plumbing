@@ -118,6 +118,18 @@ export default function Hero() {
                 </div>
               ))}
             </div>
+
+            {/* Mobile hero image */}
+            <div
+              className="lg:hidden mt-8 rounded-2xl overflow-hidden animate-fade-up delay-400"
+              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)" }}
+            >
+              <img
+                src="/hero-bathroom.jpg"
+                alt="Bathroom installation by FlowFirst Plumbing"
+                className="w-full h-56 object-cover block"
+              />
+            </div>
           </div>
 
           {/* Right: Service visual */}
