@@ -120,18 +120,6 @@ export default function About() {
                     charges a fair price. That's still what I do every day."
                   </blockquote>
 
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-[#1e3f52] font-700 text-sm"
-                      style={{ background: G.medium }}
-                    >
-                      GA
-                    </div>
-                    <div>
-                      <p className="text-white font-600 text-sm">Owner, FlowFirst Plumbing</p>
-                      <p className="text-white/40 text-xs">Shipham, North Somerset</p>
-                    </div>
-                  </div>
                 </div>
               </div>
 
