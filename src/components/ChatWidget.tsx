@@ -155,7 +155,7 @@ export default function ChatWidget() {
     <>
       {/* Chat panel */}
       <div
-        className={`fixed right-4 sm:right-6 z-[300] w-[calc(100vw-2rem)] sm:w-96 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${
+        className={`fixed right-4 sm:right-6 z-[9999] w-[calc(100vw-2rem)] sm:w-96 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${
           open ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"
         }`}
         style={{ maxHeight: "75vh", boxShadow: "0 24px 64px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07)", bottom: "calc(4.5rem + env(safe-area-inset-bottom, 0px))" }}
@@ -264,7 +264,7 @@ export default function ChatWidget() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Open chat"
-        className="fixed right-4 sm:right-6 z-[300] w-14 h-14 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
+        className="fixed right-4 sm:right-6 z-[9999] w-14 h-14 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
         style={{ background: G.dark, boxShadow: "0 8px 32px rgba(45,95,120,0.5)", bottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className={`transition-all duration-200 ${open ? "rotate-90 scale-90" : "rotate-0 scale-100"}`}>
