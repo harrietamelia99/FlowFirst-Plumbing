@@ -37,7 +37,6 @@ export default function TiltCard({
   };
 
   return (
-    // @ts-expect-error dynamic tag
     <Tag
       ref={ref}
       className={`tilt-card ${className}`}
