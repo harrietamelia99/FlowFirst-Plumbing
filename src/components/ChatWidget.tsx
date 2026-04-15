@@ -1,0 +1,281 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { X, Send, MessageCircle } from "lucide-react";
+
+const G = {
+  dark: "linear-gradient(135deg, #419ebc 0%, #2d5f78 50%, #1e3f52 100%)",
+  medium: "linear-gradient(135deg, #9ee7f0 0%, #419ebc 100%)",
+};
+
+type Message = { from: "bot" | "user"; text: string; links?: { label: string; href: string }[] };
+
+const GREETING: Message = {
+  from: "bot",
+  text: "Hi there! 👋 I'm the FlowFirst assistant. I can answer common questions about our plumbing services. What can I help you with?",
+};
+
+// ── FAQ matching rules ───────────────────────────────────────
+const rules: {
+  patterns: RegExp[];
+  response: string;
+  links?: { label: string; href: string }[];
+}[] = [
+  {
+    patterns: [/quote|price|cost|how much|estimate|charge/i],
+    response:
+      "We don't give quotes over the phone — every job is different, so we prefer to visit first and give you a clear, honest price with no surprises. Get in touch and we'll arrange a convenient time.",
+    links: [
+      { label: "Request a visit →", href: "#contact" },
+      { label: "Message on WhatsApp", href: "https://wa.me/447946113945?text=Hi%2C%20I%27d%20like%20to%20get%20a%20quote." },
+    ],
+  },
+  {
+    patterns: [/emergency|urgent|burst|flood|leak|right now|asap|today/i],
+    response:
+      "For emergencies, the fastest way to reach us is by phone or WhatsApp. We prioritise urgent jobs like burst pipes and flooding.",
+    links: [
+      { label: "Call now", href: "tel:+447946113945" },
+      { label: "WhatsApp us", href: "https://wa.me/447946113945?text=I+have+a+plumbing+emergency." },
+    ],
+  },
+  {
+    patterns: [/area|cover|location|where|travel|somerset|bristol|bath|bridgwater|weston/i],
+    response:
+      "We cover North Somerset, Bath & North East Somerset, Sedgemoor and Bristol. Based in Shipham — so we're well placed for the whole region.",
+  },
+  {
+    patterns: [/qualified|insured|certification|gas safe|qualif/i],
+    response:
+      "Yes — we're fully qualified and carry public liability insurance. You can ask to see our documents at any time.",
+  },
+  {
+    patterns: [/bathroom|installation|fit|suite|shower|bath/i],
+    response:
+      "Bathroom installations are one of our specialities. From full design-and-fit suites to replacing a single unit — we handle it all. Get in touch and we'll come and take a look.",
+    links: [{ label: "Get in touch →", href: "#contact" }],
+  },
+  {
+    patterns: [/heating|boiler|radiator|thermostat|central heating/i],
+    response:
+      "We carry out heating maintenance, radiator work and general heating system servicing. Drop us a message and we'll talk through what you need.",
+    links: [{ label: "Contact us →", href: "#contact" }],
+  },
+  {
+    patterns: [/hours|open|weekend|saturday|sunday|when/i],
+    response:
+      "We work Monday to Saturday, 7am–7pm. For genuine emergencies outside those hours, give us a call and we'll do our best to help.",
+  },
+  {
+    patterns: [/phone|number|call|ring|telephone/i],
+    response: "You can reach us on 07946 113945.",
+    links: [
+      { label: "Call now", href: "tel:+447946113945" },
+      { label: "WhatsApp", href: "https://wa.me/447946113945" },
+    ],
+  },
+  {
+    patterns: [/whatsapp|message|chat|text/i],
+    response: "Tap below to open a WhatsApp chat — we reply promptly.",
+    links: [{ label: "Message on WhatsApp", href: "https://wa.me/447946113945?text=Hi%2C%20I%27d%20like%20some%20help." }],
+  },
+  {
+    patterns: [/service|what do you do|repair|fix|job|work/i],
+    response:
+      "We cover emergency plumbing, general repairs, leak detection, bathroom installations, pipework, and heating maintenance. Have a browse of our services below.",
+    links: [{ label: "View all services →", href: "#services" }],
+  },
+  {
+    patterns: [/thank|thanks|cheers|great|perfect|helpful/i],
+    response: "No problem at all! Is there anything else I can help with? 😊",
+  },
+  {
+    patterns: [/hi|hello|hey|morning|afternoon|evening/i],
+    response: "Hi! How can I help you today? Feel free to ask about our services, areas we cover, or anything else.",
+  },
+];
+
+function getBotResponse(input: string): Message {
+  for (const rule of rules) {
+    if (rule.patterns.some((p) => p.test(input))) {
+      return { from: "bot", text: rule.response, links: rule.links };
+    }
+  }
+  return {
+    from: "bot",
+    text: "I'm not sure about that one — for anything specific it's best to get in touch directly and we'll be happy to help.",
+    links: [
+      { label: "Contact us →", href: "#contact" },
+      { label: "WhatsApp us", href: "https://wa.me/447946113945" },
+    ],
+  };
+}
+
+export default function ChatWidget() {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([GREETING]);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [unread, setUnread] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, typing]);
+
+  useEffect(() => {
+    if (open) {
+      setUnread(false);
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+  }, [open]);
+
+  // Nudge notification after 8s
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!open) setUnread(true);
+    }, 8000);
+    return () => clearTimeout(t);
+  }, [open]);
+
+  const send = () => {
+    const text = input.trim();
+    if (!text) return;
+    setMessages((m) => [...m, { from: "user", text }]);
+    setInput("");
+    setTyping(true);
+    setTimeout(() => {
+      setTyping(false);
+      setMessages((m) => [...m, getBotResponse(text)]);
+    }, 900 + Math.random() * 400);
+  };
+
+  return (
+    <>
+      {/* Chat panel */}
+      <div
+        className={`fixed bottom-24 right-4 sm:right-6 z-[300] w-[calc(100vw-2rem)] sm:w-96 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${
+          open ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"
+        }`}
+        style={{ maxHeight: "75vh", boxShadow: "0 24px 64px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07)" }}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-5 py-4 flex-shrink-0"
+          style={{ background: G.dark }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white font-700 text-sm">
+              FF
+            </div>
+            <div>
+              <p className="text-white font-700 text-sm leading-tight">FlowFirst Plumbing</p>
+              <p className="text-white/60 text-xs">Typically replies in minutes</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setOpen(false)}
+            className="text-white/70 hover:text-white transition-colors p-1"
+            aria-label="Close chat"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: "#1a1a1a" }}>
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[85%] ${msg.from === "user" ? "" : ""}`}>
+                <div
+                  className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                    msg.from === "user"
+                      ? "text-[#1e3f52] font-600 rounded-br-sm"
+                      : "text-gray-200 bg-[#2c2c2c] rounded-bl-sm"
+                  }`}
+                  style={msg.from === "user" ? { background: "linear-gradient(135deg,#9ee7f0,#419ebc)" } : {}}
+                >
+                  {msg.text}
+                </div>
+                {msg.links && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {msg.links.map((l) => (
+                      <a
+                        key={l.href}
+                        href={l.href}
+                        target={l.href.startsWith("http") ? "_blank" : undefined}
+                        rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                        onClick={() => { if (!l.href.startsWith("http")) setOpen(false); }}
+                        className="inline-block text-xs font-600 px-3 py-1.5 rounded-lg transition-opacity hover:opacity-80"
+                        style={{ background: "#2c2c2c", color: "#9ee7f0", border: "1px solid rgba(158,231,240,0.2)" }}
+                      >
+                        {l.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {typing && (
+            <div className="flex justify-start">
+              <div className="bg-[#2c2c2c] px-4 py-3 rounded-2xl rounded-bl-sm flex gap-1 items-center">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full bg-gray-500 animate-bounce"
+                    style={{ animationDelay: `${i * 150}ms` }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Input */}
+        <div className="flex items-center gap-2 px-3 py-3 flex-shrink-0" style={{ background: "#242424", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="Ask a question…"
+            className="flex-1 bg-[#2c2c2c] text-white text-sm px-4 py-2.5 rounded-xl placeholder:text-gray-600 focus:outline-none"
+            onFocus={(e) => (e.target.style.boxShadow = "0 0 0 2px rgba(65,158,188,0.4)")}
+            onBlur={(e) => (e.target.style.boxShadow = "none")}
+          />
+          <button
+            onClick={send}
+            disabled={!input.trim()}
+            aria-label="Send message"
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all hover:opacity-85 disabled:opacity-30"
+            style={{ background: G.dark }}
+          >
+            <Send size={15} />
+          </button>
+        </div>
+      </div>
+
+      {/* FAB */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-label="Open chat"
+        className="fixed bottom-5 right-4 sm:right-6 z-[300] w-14 h-14 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
+        style={{ background: G.dark, boxShadow: "0 8px 32px rgba(45,95,120,0.5)" }}
+      >
+        <div className={`transition-all duration-200 ${open ? "rotate-90 scale-90" : "rotate-0 scale-100"}`}>
+          {open ? <X size={22} /> : <MessageCircle size={22} />}
+        </div>
+
+        {/* Unread dot */}
+        {unread && !open && (
+          <span className="absolute top-1 right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-[#242424]" />
+        )}
+      </button>
+    </>
+  );
+}

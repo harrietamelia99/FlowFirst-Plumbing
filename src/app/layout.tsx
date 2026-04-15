@@ -3,6 +3,7 @@ import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
+import ChatWidget from "@/components/ChatWidget";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
         <ScrollProgress />
         <SmoothScroll />
         {children}
+        <ChatWidget />
       </body>
     </html>
   );
