@@ -24,7 +24,7 @@ const contactInfo = [
     label: "Phone",
     value: "07946 113945",
     href: "tel:+447946113945",
-    sub: "Mon–Sat 7am–7pm · 24/7 emergencies",
+    sub: "Mon–Sat 7am–7pm",
   },
   {
     icon: MapPin,
@@ -38,7 +38,7 @@ const contactInfo = [
     label: "Hours",
     value: "Mon–Sat: 7am – 7pm",
     href: null,
-    sub: "Emergency callouts available 24/7",
+    sub: "Emergency callouts available",
   },
 ];
 
@@ -261,7 +261,7 @@ export default function Contact() {
 
                   <p className="mt-4 text-center text-xs text-gray-500">
                     We respond within 2 hours during working hours. For
-                    emergencies, call us directly. Available 24/7.
+                    emergencies, call us directly.
                   </p>
                 </form>
               )}

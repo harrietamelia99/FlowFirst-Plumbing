@@ -14,7 +14,7 @@ const services = [
     icon: Zap,
     title: "Emergency plumbing",
     description:
-      "Burst pipes, flooding or sudden leaks? We respond fast, 24 hours a day, 7 days a week, so you're never left in a crisis.",
+      "Burst pipes, flooding or sudden leaks? We respond fast so you're never left in a crisis.",
     highlight: true,
   },
   {
@@ -111,7 +111,7 @@ export default function Services() {
                       style={{ background: "linear-gradient(180deg, #9ee7f0 0%, transparent 100%)" }}
                     />
                     <span className="absolute top-4 right-4 text-[10px] font-700 bg-white/20 text-white px-2 py-1 rounded-full tracking-wider uppercase">
-                      24/7
+                      Emergency
                     </span>
                   </>
                 )}

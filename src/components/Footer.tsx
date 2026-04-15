@@ -149,7 +149,7 @@ export default function Footer() {
                 className="text-xs font-600 mb-1 bg-clip-text text-transparent"
                 style={{ backgroundImage: G.medium }}
               >
-                24/7 Emergency Line
+                Emergency Line
               </p>
               <a
                 href="tel:+447946113945"

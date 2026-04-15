@@ -52,7 +52,7 @@ export default function Hero() {
             <div className="flex items-center gap-3 mb-7 animate-fade-in">
               <span className="block h-px w-8 shrink-0" style={{ background: G.medium }} />
               <span className="text-[0.7rem] font-700 tracking-[0.2em] uppercase text-[#9ee7f0]">
-                24/7 Emergency Callouts Available
+                Emergency Callouts Available
               </span>
             </div>
 

@@ -18,7 +18,7 @@ const faqs = [
   {
     question: "How quickly can you respond to a plumbing emergency?",
     answer:
-      "For emergencies, we aim to reach you within the hour across our service area. Available 24 hours a day, 7 days a week for urgent jobs like burst pipes, flooding or a complete loss of water.",
+      "For emergencies, we aim to reach you as quickly as possible across our service area. We prioritise urgent jobs like burst pipes, flooding or a complete loss of water.",
   },
   {
     question: "Are you fully qualified and insured?",
