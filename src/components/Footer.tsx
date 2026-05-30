@@ -185,8 +185,8 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-6 text-xs" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
           <p>© {currentYear} FlowFirst Plumbing. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
           </div>
         </div>
       </div>
