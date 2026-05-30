@@ -54,13 +54,14 @@ const MAYBE_AREAS: string[] = [
   "nailsworth","tetbury","chipping sodbury","thornbury","dursley","berkeley",
 ];
 
-function getAreaResponse(input: string): string | null {
-  const lower = input.toLowerCase();
-  // Only trigger if it looks like a location question
-  if (!/come to|travel to|cover|do you do|you work in|available in|near|service|area|visit|reach/i.test(input) &&
-      !COVERED_AREAS.some(a => lower.includes(a)) &&
-      !MAYBE_AREAS.some(a => lower.includes(a))) return null;
+// Must look like a location question before we try area matching
+const LOCATION_INTENT = /come to|travel to|you cover|do you cover|can you get to|do you work in|available in|you available|you come out to|you service|your area|service area|do you visit|you travel|based in|near me|near you/i;
 
+function getAreaResponse(input: string): string | null {
+  // Only try area matching if the question is clearly about location coverage
+  if (!LOCATION_INTENT.test(input)) return null;
+
+  const lower = input.toLowerCase();
   const matchedCovered = COVERED_AREAS.find(a => lower.includes(a));
   if (matchedCovered) {
     const display = matchedCovered.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
@@ -90,7 +91,7 @@ const rules: {
     ],
   },
   {
-    patterns: [/emergency|urgent|burst|flood|leak|right now|asap|today/i],
+    patterns: [/emergency|urgent|burst pipe|flood|no water|water everywhere|water pouring|right now|asap|straight away/i],
     response:
       "For emergencies, the fastest way to reach us is by phone or WhatsApp. We prioritise urgent jobs like burst pipes and flooding.",
     links: [
@@ -98,35 +99,114 @@ const rules: {
       { label: "WhatsApp us", href: "https://wa.me/447946113945?text=I+have+a+plumbing+emergency." },
     ],
   },
+  // ── Leaks ──
   {
-    patterns: [/area|cover|location|where do you|what area|which area|service area/i],
+    patterns: [/leak(ing|y)?|dripping|drips|water coming through|damp patch|wet patch|water damage|water stain/i],
+    response:
+      "Leaks can cause real damage if left — we offer leak detection and repair. We'll locate the source and fix it properly. Get in touch and we'll arrange a visit.",
+    links: [{ label: "Book a visit →", href: "#contact" }],
+  },
+  // ── Drains & blockages ──
+  {
+    patterns: [/block(ed|age)?|drain|slow drain|won't drain|not draining|clogged|gurgling|smell(ing|y)? drain|sewer/i],
+    response:
+      "Blocked drains and slow drainage are a common one — we clear blockages in sinks, toilets, showers and external drains. Give us a message and we'll sort it.",
+    links: [{ label: "Get in touch →", href: "#contact" }],
+  },
+  // ── Toilets ──
+  {
+    patterns: [/toilet|loo|wc|cistern|flush(ing)?|won't flush|running toilet|constantly running|overflowing toilet/i],
+    response:
+      "Whether it's a toilet that won't flush, keeps running, or is overflowing — we can fix it. Toilet repairs are usually a quick job. Drop us a message.",
+    links: [{ label: "Message on WhatsApp", href: "https://wa.me/447946113945?text=Hi%2C%20I%20need%20help%20with%20my%20toilet." }],
+  },
+  // ── Taps ──
+  {
+    patterns: [/tap(s)?|dripping tap|leaking tap|fix my tap|tap won't turn|no hot water from tap|running tap/i],
+    response:
+      "Dripping or leaking taps waste a surprising amount of water. We can repair or replace taps on sinks, baths and showers. Get in touch and we'll take a look.",
+    links: [{ label: "Contact us →", href: "#contact" }],
+  },
+  // ── Bath ──
+  {
+    patterns: [/fix my bath|bath not draining|bath leak|bath overflow|bath tap|bath seal|bath panel|bathtub/i],
+    response:
+      "Yes, we can help with bath repairs — whether it's a leaking tap, poor drainage, a faulty overflow or a cracked seal. Get in touch and we'll come and take a look.",
+    links: [{ label: "Book a visit →", href: "#contact" }],
+  },
+  // ── Shower ──
+  {
+    patterns: [/shower|shower tray|shower head|shower leak|shower not working|power shower|electric shower|shower drain/i],
+    response:
+      "We install and repair showers — from electric and power showers to full shower enclosures and trays. Happy to come and assess what you need.",
+    links: [{ label: "Get in touch →", href: "#contact" }],
+  },
+  // ── Bathroom installs ──
+  {
+    patterns: [/bathroom|new bathroom|bathroom fit|bathroom install|bathroom suite|bathroom renovation|bathroom refurb/i],
+    response:
+      "Bathroom installations are one of our specialities — from full suites to individual unit replacements. We'll come out, assess the space and give you a clear price.",
+    links: [{ label: "Request a visit →", href: "#contact" }],
+  },
+  // ── Boiler & heating ──
+  {
+    patterns: [/boiler|central heating|no heat|heating not working|heating broke|radiator|cold radiator|bleed|thermostat|pressure|boiler pressure|pilot light/i],
+    response:
+      "We carry out heating system maintenance including radiator repairs, bleeding, thermostat checks and general boiler servicing. Drop us a message and we'll talk it through.",
+    links: [{ label: "Contact us →", href: "#contact" }],
+  },
+  // ── Hot water ──
+  {
+    patterns: [/no hot water|hot water not working|cold water only|hot water gone|hot water tank|cylinder|immersion/i],
+    response:
+      "No hot water is a real inconvenience — we can diagnose the cause whether it's the boiler, cylinder, immersion heater or pipework. Get in touch and we'll get it sorted.",
+    links: [
+      { label: "Call now", href: "tel:+447946113945" },
+      { label: "WhatsApp us", href: "https://wa.me/447946113945" },
+    ],
+  },
+  // ── Pipes ──
+  {
+    patterns: [/pipe(s|work)?|pipework|frozen pipe|pipe burst|pipe repair|copper pipe|plastic pipe|push fit|water pressure|low pressure|high pressure/i],
+    response:
+      "We handle all kinds of pipework — repairs, replacements, new runs and pressure issues. Tell us what's going on and we'll come and assess it.",
+    links: [{ label: "Get in touch →", href: "#contact" }],
+  },
+  // ── Water pressure ──
+  {
+    patterns: [/water pressure|low pressure|pressure drop|no pressure|weak flow/i],
+    response:
+      "Low water pressure can be caused by a few different things — blocked filters, pipework issues or supply problems. We can investigate and fix it. Get in touch.",
+    links: [{ label: "Book a visit →", href: "#contact" }],
+  },
+  // ── General service/repair question ──
+  {
+    patterns: [/can you fix|can you help|can you sort|do you fix|do you repair|do you install|what do you do|what can you do|services|what do you cover/i],
+    response:
+      "We cover a wide range of plumbing work — leaks, blocked drains, toilets, taps, showers, baths, bathroom installations, pipework, and heating maintenance. What's the issue you're dealing with?",
+    links: [{ label: "View all services →", href: "#services" }],
+  },
+  // ── Area ──
+  {
+    patterns: [/area|cover|location|where do you|what area|which area|service area|do you come out/i],
     response:
       "We cover North Somerset, Bath & North East Somerset, Sedgemoor and Bristol — based in Shipham so we're well placed for the whole region. Ask me about a specific town and I'll let you know!",
   },
+  // ── Qualifications ──
   {
-    patterns: [/qualified|insured|certification|gas safe|qualif/i],
+    patterns: [/qualified|insured|certification|gas safe|qualif|registered|accredited/i],
     response:
       "Yes — we're fully qualified and carry public liability insurance. You can ask to see our documents at any time.",
   },
+  // ── Hours ──
   {
-    patterns: [/bathroom|installation|fit|suite|shower|bath/i],
-    response:
-      "Bathroom installations are one of our specialities. From full design-and-fit suites to replacing a single unit — we handle it all. Get in touch and we'll come and take a look.",
-    links: [{ label: "Get in touch →", href: "#contact" }],
-  },
-  {
-    patterns: [/heating|boiler|radiator|thermostat|central heating/i],
-    response:
-      "We carry out heating maintenance, radiator work and general heating system servicing. Drop us a message and we'll talk through what you need.",
-    links: [{ label: "Contact us →", href: "#contact" }],
-  },
-  {
-    patterns: [/hours|open|weekend|saturday|sunday|when/i],
+    patterns: [/hours|open|available|weekend|saturday|sunday|when do you work|working hours/i],
     response:
       "We work Monday to Saturday, 7am–7pm. For genuine emergencies outside those hours, give us a call and we'll do our best to help.",
   },
+  // ── Contact ──
   {
-    patterns: [/phone|number|call|ring|telephone/i],
+    patterns: [/phone|number|call|ring|telephone|how do i contact|get in touch/i],
     response: "You can reach us on 07946 113945.",
     links: [
       { label: "Call now", href: "tel:+447946113945" },
@@ -138,18 +218,13 @@ const rules: {
     response: "Tap below to open a WhatsApp chat — we reply promptly.",
     links: [{ label: "Message on WhatsApp", href: "https://wa.me/447946113945?text=Hi%2C%20I%27d%20like%20some%20help." }],
   },
+  // ── Pleasantries ──
   {
-    patterns: [/service|what do you do|repair|fix|job|work/i],
-    response:
-      "We cover emergency plumbing, general repairs, leak detection, bathroom installations, pipework, and heating maintenance. Have a browse of our services below.",
-    links: [{ label: "View all services →", href: "#services" }],
+    patterns: [/thank|thanks|cheers|great|perfect|helpful|brilliant/i],
+    response: "No problem at all! Is there anything else I can help with?",
   },
   {
-    patterns: [/thank|thanks|cheers|great|perfect|helpful/i],
-    response: "No problem at all! Is there anything else I can help with? 😊",
-  },
-  {
-    patterns: [/hi|hello|hey|morning|afternoon|evening/i],
+    patterns: [/hi|hello|hey|morning|afternoon|evening|howdy/i],
     response: "Hi! How can I help you today? Feel free to ask about our services, areas we cover, or anything else.",
   },
 ];
