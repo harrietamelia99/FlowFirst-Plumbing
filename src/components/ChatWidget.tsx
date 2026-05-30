@@ -16,33 +16,32 @@ const GREETING: Message = {
 };
 
 // ── Area coverage data ───────────────────────────────────────
+// Avoid single common words that double as plumbing/household terms (bath, wells, pill, mark, street)
 const COVERED_AREAS: string[] = [
   // North Somerset
-  "shipham","weston-super-mare","weston super mare","clevedon","nailsea","portishead","pill",
+  "shipham","weston-super-mare","weston super mare","clevedon","nailsea","portishead",
   "yatton","congresbury","winscombe","banwell","axbridge","cheddar","sandford","churchill",
-  "long ashton","backwell","flax bourton","failand","wraxall","west end","locking","hutton",
+  "long ashton","backwell","flax bourton","failand","wraxall","locking","hutton",
   "bleadon","brean","berrow","brent knoll","east brent","loxton","christon","compton bishop",
-  "wedmore","heath house","lympsham","uphill","worle","kewstoke",
+  "wedmore","lympsham","uphill","worle","kewstoke",
   // Bath & North East Somerset
-  "bath","keynsham","radstock","midsomer norton","peasedown st john","paulton","saltford",
-  "chew magna","chew valley","clutton","temple cloud","pensford","whitchurch","farmborough",
-  "high littleton","hallatrow","timsbury","camerton","dunkerton","wellow","freshford",
-  "limpley stoke","combe down","odd down","twerton","larkhall","bathampton","batheaston",
-  "bathford","corsham road","monkton combe","norton st philip","faulkland","nunney",
+  "city of bath","bath city","keynsham","radstock","midsomer norton","peasedown st john",
+  "paulton","saltford","chew magna","chew valley","clutton","temple cloud","pensford",
+  "whitchurch","farmborough","high littleton","hallatrow","timsbury","camerton","dunkerton",
+  "wellow","freshford","limpley stoke","combe down","odd down","twerton","larkhall",
+  "bathampton","batheaston","bathford","monkton combe","norton st philip","faulkland",
   // Sedgemoor / Somerset
-  "bridgwater","burnham-on-sea","burnham on sea","highbridge","glastonbury","wells",
-  "shepton mallet","street","cheddar","mark","woolavington","puriton","cannington",
-  "nether stowey","stogursey","north petherton","durleigh","westonzoyland","middlezoy",
-  "othery","moorlinch","catcott","shapwick","ashcott","pedwell","walton","meare",
-  "godney","northload","west pennard","pilton","shepton","evercreech",
+  "bridgwater","burnham-on-sea","burnham on sea","highbridge","glastonbury",
+  "shepton mallet","woolavington","puriton","cannington","nether stowey","stogursey",
+  "north petherton","durleigh","westonzoyland","middlezoy","othery","moorlinch","catcott",
+  "shapwick","ashcott","pedwell","walton","meare","godney","west pennard","pilton","evercreech",
   // Bristol
-  "bristol","clifton","redland","bishopston","horfield","filton","henleaze","westbury",
-  "bedminster","southville","totterdown","windmill hill","knowle","brislington",
-  "hanham","kingswood","staple hill","mangotsfield","downend","frampton cotterell",
-  "coalpit heath","yate","chipping sodbury","wickwar","thornbury","almondsbury",
-  "patchway","bradley stoke","stoke gifford","emersons green","warmley","longwell green",
-  "keynsham","saltford","pensford","whitchurch","hartcliffe","stockwood","hengrove",
-  "filwood","brentry","southmead","lockleaze","eastville","st george","barton hill",
+  "bristol","clifton","redland","bishopston","horfield","filton","henleaze","westbury on trym",
+  "bedminster","southville","totterdown","knowle","brislington","hanham","kingswood",
+  "staple hill","mangotsfield","downend","frampton cotterell","coalpit heath","yate",
+  "chipping sodbury","wickwar","thornbury","almondsbury","patchway","bradley stoke",
+  "stoke gifford","emersons green","warmley","longwell green","hartcliffe","stockwood",
+  "hengrove","brentry","southmead","lockleaze","eastville","st george","barton hill",
   "lawrence hill","redcliffe","hotwells","cotham",
 ];
 
@@ -55,7 +54,7 @@ const MAYBE_AREAS: string[] = [
 ];
 
 // Must look like a location question before we try area matching
-const LOCATION_INTENT = /come to|travel to|you cover|do you cover|can you get to|do you work in|available in|you available|you come out to|you service|your area|service area|do you visit|you travel|based in|near me|near you/i;
+const LOCATION_INTENT = /come to|travel to|you cover|do you cover|can you get to|do you work in|available in|you available|you come out to|you service|your area|service area|do you visit|you travel|based in|near me|near you|in bath|near bath|around bath|in wells|near wells|in bristol|near bristol/i;
 
 function getAreaResponse(input: string): string | null {
   // Only try area matching if the question is clearly about location coverage
