@@ -15,6 +15,65 @@ const GREETING: Message = {
   text: "Hi there! 👋 I'm the FlowFirst assistant. I can answer common questions about our plumbing services. What can I help you with?",
 };
 
+// ── Area coverage data ───────────────────────────────────────
+const COVERED_AREAS: string[] = [
+  // North Somerset
+  "shipham","weston-super-mare","weston super mare","clevedon","nailsea","portishead","pill",
+  "yatton","congresbury","winscombe","banwell","axbridge","cheddar","sandford","churchill",
+  "long ashton","backwell","flax bourton","failand","wraxall","west end","locking","hutton",
+  "bleadon","brean","berrow","brent knoll","east brent","loxton","christon","compton bishop",
+  "wedmore","heath house","lympsham","uphill","worle","kewstoke",
+  // Bath & North East Somerset
+  "bath","keynsham","radstock","midsomer norton","peasedown st john","paulton","saltford",
+  "chew magna","chew valley","clutton","temple cloud","pensford","whitchurch","farmborough",
+  "high littleton","hallatrow","timsbury","camerton","dunkerton","wellow","freshford",
+  "limpley stoke","combe down","odd down","twerton","larkhall","bathampton","batheaston",
+  "bathford","corsham road","monkton combe","norton st philip","faulkland","nunney",
+  // Sedgemoor / Somerset
+  "bridgwater","burnham-on-sea","burnham on sea","highbridge","glastonbury","wells",
+  "shepton mallet","street","cheddar","mark","woolavington","puriton","cannington",
+  "nether stowey","stogursey","north petherton","durleigh","westonzoyland","middlezoy",
+  "othery","moorlinch","catcott","shapwick","ashcott","pedwell","walton","meare",
+  "godney","northload","west pennard","pilton","shepton","evercreech",
+  // Bristol
+  "bristol","clifton","redland","bishopston","horfield","filton","henleaze","westbury",
+  "bedminster","southville","totterdown","windmill hill","knowle","brislington",
+  "hanham","kingswood","staple hill","mangotsfield","downend","frampton cotterell",
+  "coalpit heath","yate","chipping sodbury","wickwar","thornbury","almondsbury",
+  "patchway","bradley stoke","stoke gifford","emersons green","warmley","longwell green",
+  "keynsham","saltford","pensford","whitchurch","hartcliffe","stockwood","hengrove",
+  "filwood","brentry","southmead","lockleaze","eastville","st george","barton hill",
+  "lawrence hill","redcliffe","hotwells","cotham",
+];
+
+const MAYBE_AREAS: string[] = [
+  "frome","shepton","taunton","minehead","watchet","williton","porlock","dulverton",
+  "chard","ilminster","somerton","langport","yeovil","crewkerne","martock","castle cary",
+  "wincanton","bruton","mere","warminster","westbury","trowbridge","chippenham","corsham",
+  "bradford on avon","melksham","devizes","swindon","marlborough","cirencester","stroud",
+  "nailsworth","tetbury","chipping sodbury","thornbury","dursley","berkeley",
+];
+
+function getAreaResponse(input: string): string | null {
+  const lower = input.toLowerCase();
+  // Only trigger if it looks like a location question
+  if (!/come to|travel to|cover|do you do|you work in|available in|near|service|area|visit|reach/i.test(input) &&
+      !COVERED_AREAS.some(a => lower.includes(a)) &&
+      !MAYBE_AREAS.some(a => lower.includes(a))) return null;
+
+  const matchedCovered = COVERED_AREAS.find(a => lower.includes(a));
+  if (matchedCovered) {
+    const display = matchedCovered.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    return `Yes, we cover ${display}! We're based in Shipham so that's well within our area. Get in touch and we'll arrange a visit.`;
+  }
+  const matchedMaybe = MAYBE_AREAS.find(a => lower.includes(a));
+  if (matchedMaybe) {
+    const display = matchedMaybe.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    return `${display} may be at the edge of our usual coverage area — it's worth getting in touch directly and we can let you know if we can help.`;
+  }
+  return null;
+}
+
 // ── FAQ matching rules ───────────────────────────────────────
 const rules: {
   patterns: RegExp[];
@@ -40,9 +99,9 @@ const rules: {
     ],
   },
   {
-    patterns: [/area|cover|location|where|travel|somerset|bristol|bath|bridgwater|weston/i],
+    patterns: [/area|cover|location|where do you|what area|which area|service area/i],
     response:
-      "We cover North Somerset, Bath & North East Somerset, Sedgemoor and Bristol. Based in Shipham — so we're well placed for the whole region.",
+      "We cover North Somerset, Bath & North East Somerset, Sedgemoor and Bristol — based in Shipham so we're well placed for the whole region. Ask me about a specific town and I'll let you know!",
   },
   {
     patterns: [/qualified|insured|certification|gas safe|qualif/i],
@@ -96,6 +155,18 @@ const rules: {
 ];
 
 function getBotResponse(input: string): Message {
+  // Check specific area lookup first
+  const areaReply = getAreaResponse(input);
+  if (areaReply) {
+    return {
+      from: "bot",
+      text: areaReply,
+      links: [
+        { label: "Get in touch →", href: "#contact" },
+        { label: "WhatsApp us", href: "https://wa.me/447946113945?text=Hi%2C%20I%27d%20like%20to%20book%20a%20visit." },
+      ],
+    };
+  }
   for (const rule of rules) {
     if (rule.patterns.some((p) => p.test(input))) {
       return { from: "bot", text: rule.response, links: rule.links };
