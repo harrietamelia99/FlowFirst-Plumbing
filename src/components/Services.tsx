@@ -142,14 +142,6 @@ export default function Services() {
                   {service.description}
                 </p>
 
-                {!service.highlight && (
-                  <div className="mt-5 flex items-center gap-1.5 text-sm font-600 text-[#9ee7f0] opacity-0 group-hover:opacity-100 transition-opacity">
-                    Learn more
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                      <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                )}
               </div>
             );
           })}
